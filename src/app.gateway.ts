@@ -1,10 +1,10 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, WsResponse } from '@nestjs/websockets';
 
 @WebSocketGateway()
-class AppGateway {
+export class AppGateway {
   @SubscribeMessage('message')
-  handleMessage(@MessageBody() msg: string): WsResponse<string> {
-    return { event: 'message', data: msg };
+  handleMessage(@MessageBody() data: any): WsResponse<string> {
+    return { event: 'message', data };
   }
 }
 
