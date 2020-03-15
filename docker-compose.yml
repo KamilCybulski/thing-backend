@@ -1,0 +1,11 @@
+version: '3.7'
+
+services: 
+  api:
+    container_name: thing_api
+    image: thing:latest
+    build: .
+    volumes: 
+      - .:/usr/src/app
+    ports:
+      - 3000:3000
