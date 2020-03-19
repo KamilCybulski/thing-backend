@@ -5,7 +5,26 @@ services:
     container_name: thing_api
     image: thing:latest
     build: .
+    networks:
+      - thing_net
     volumes: 
       - .:/usr/src/app
     ports:
       - 3000:3000
+    depends_on: 
+      - db
+
+  db:
+    image: postgres:12.2
+    container_name: thing_db
+    env_file: .env
+    networks: 
+      - thing_net
+    volumes:
+      - thing_data:/var/lib/postgresql/data
+
+volumes: 
+  thing_data:
+
+networks:
+  thing_net:
