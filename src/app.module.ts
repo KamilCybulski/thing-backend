@@ -14,7 +14,7 @@ import { MessageModule } from './message/message.module';
       imports: [ConfigModule],
       useClass: TypeOrmConfigService,
     }),
-    MessageModule
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],
