@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AppGateway } from './app.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config';
@@ -16,7 +14,7 @@ import { MessageModule } from './message/message.module';
     }),
     MessageModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, AppGateway],
+  controllers: [],
+  providers: [AppGateway],
 })
 export class AppModule {}
