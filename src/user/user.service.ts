@@ -7,11 +7,11 @@ import { UserCredentialsDTO } from './dtos';
 export class UserService {
   constructor(@InjectRepository(UserRepository) private readonly userRepository: UserRepository) {}
 
-  signUp(dto: UserCredentialsDTO) {
+  create(dto: UserCredentialsDTO) {
     return this.userRepository.createUser(dto);
   }
 
-  signIn(dto: UserCredentialsDTO) {
-    return this.userRepository.validateUser(dto);
+  find(dto: UserCredentialsDTO) {
+    return this.userRepository.findUser(dto);
   }
 }

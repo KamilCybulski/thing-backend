@@ -1,19 +1,32 @@
-import { Controller, Post, HttpCode, Body } from '@nestjs/common';
+import { Controller, Post, HttpCode, Body, UnauthorizedException } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserCredentialsDTO } from './dtos';
+import { UserCredentialsDTO, UserDTO } from './dtos';
+import { User } from './user.entity';
+
+const convertUserToDTO = (user: User): UserDTO => ({
+  name: user.name,
+  id: user.id,
+  createdAt: user.createdAt,
+});
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {};
 
   @Post('/signup')
-  signUp(@Body() body: UserCredentialsDTO) {
-    return this.userService.signUp(body);
+  async signUp(@Body() body: UserCredentialsDTO) {
+    const user = await this.userService.create(body);
+    return convertUserToDTO(user);
   }
 
   @Post('/signin')
   @HttpCode(200)
-  signIn(@Body() body: UserCredentialsDTO) {
-    return this.userService.signIn(body);
+  async signIn(@Body() body: UserCredentialsDTO) {
+    const user = await this.userService.find(body);
+    if (user) {
+      return convertUserToDTO(user);
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 }
