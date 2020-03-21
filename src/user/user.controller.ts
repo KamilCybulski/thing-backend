@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Request, UseGuards, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserCredentialsDTO, UserDTO } from './dtos';
 import { UserService } from './user.service';
@@ -16,7 +16,13 @@ export class UserController {
   @UseGuards(AuthGuard('local'))
   @Post('/signin')
   @HttpCode(200)
-  async signIn(@Request() req) {
+  signIn(@Request() req) {
     return this.userService.signIn(req.user);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/me')
+  getMe(@Request() req) {
+    return req.user;
   }
 }
