@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { UserDTO } from './dtos';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -23,4 +24,12 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: number;
+
+  toDTO(): UserDTO {
+    return {
+      name: this.name,
+      id: this.id,
+      createdAt: this.createdAt,
+    };
+  }
 }
