@@ -1,10 +1,11 @@
-import { Controller, Post, HttpCode, Body, UnauthorizedException } from '@nestjs/common';
-import { UserService } from './user.service';
+import { Body, Controller, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { UserCredentialsDTO, UserDTO } from './dtos';
+import { UserService } from './user.service';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {};
+  constructor(private readonly userService: UserService) {}
 
   @Post('/signup')
   async signUp(@Body() body: UserCredentialsDTO): Promise<UserDTO> {
@@ -12,14 +13,10 @@ export class UserController {
     return user.toDTO();
   }
 
+  @UseGuards(AuthGuard('local'))
   @Post('/signin')
   @HttpCode(200)
-  async signIn(@Body() body: UserCredentialsDTO): Promise<UserDTO> {
-    const user = await this.userService.find(body);
-    if (user) {
-      return user.toDTO();
-    } else {
-      throw new UnauthorizedException();
-    }
+  async signIn(@Request() req): Promise<UserDTO> {
+    return req.user;
   }
 }
