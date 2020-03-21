@@ -16,7 +16,7 @@ export class UserController {
   @UseGuards(AuthGuard('local'))
   @Post('/signin')
   @HttpCode(200)
-  async signIn(@Request() req): Promise<UserDTO> {
-    return req.user;
+  async signIn(@Request() req) {
+    return this.userService.signIn(req.user);
   }
 }
