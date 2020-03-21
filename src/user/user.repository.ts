@@ -11,8 +11,4 @@ export class UserRepository extends Repository<User> {
     await user.save();
     return user;
   }
-
-  findUser(dto: UserCredentialsDTO): Promise<User> {
-    return this.findOne({ where: { name: dto.username } })
-  }
 }
