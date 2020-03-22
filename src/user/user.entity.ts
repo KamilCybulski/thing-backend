@@ -20,10 +20,10 @@ export class User extends BaseEntity {
   password: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: number;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: number;
+  updatedAt: Date;
 
   toDTO(): UserDTO {
     return {

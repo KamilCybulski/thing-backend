@@ -5,6 +5,7 @@ import { AppGateway } from './app.gateway';
 import { TypeOrmConfigService } from './config';
 import { MessageModule } from './message/message.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UserModule } from './user/user.module';
     }),
     MessageModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [AppGateway],
