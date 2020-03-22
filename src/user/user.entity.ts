@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
 import { UserDTO } from './dtos';
 
 @Entity('users')
@@ -19,6 +20,9 @@ export class User extends BaseEntity {
   @Column()
   password: string;
 
+  @Column()
+  salt: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
@@ -31,5 +35,10 @@ export class User extends BaseEntity {
       id: this.id,
       createdAt: this.createdAt,
     };
+  }
+
+  async validatePassword (password: string): Promise<boolean> {
+    const hash = await bcrypt.hash(password, this.salt);
+    return hash === this.password;
   }
 }

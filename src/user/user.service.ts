@@ -12,15 +12,15 @@ export class UserService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  create(dto: CredentialsDTO): Promise<User> {
+  create(dto: CredentialsDTO): Promise<void> {
     return this.userRepository.createUser(dto);
   }
 
-  findByName(name: string): Promise<User> {
+  findByName(name: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { name } });
   }
 
-  findById(id: number): Promise<User> {
+  findById(id: number): Promise<User | null> {
     return this.userRepository.findOne(id);
   }
 }

@@ -10,9 +10,8 @@ export class AuthController {
 
   @UsePipes(ValidationPipe)
   @Post('/signup')
-  async signUp(@Body() body: CredentialsDTO): Promise<UserDTO> {
-    const user = await this.authService.signUp(body);
-    return user.toDTO();
+  signUp(@Body() body: CredentialsDTO): Promise<void> {
+    return this.authService.signUp(body);
   }
 
   @UseGuards(AuthGuard('local'))
