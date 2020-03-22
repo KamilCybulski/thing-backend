@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppGateway } from './app.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppGateway } from './app.gateway';
 import { TypeOrmConfigService } from './config';
 import { MessageModule } from './message/message.module';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { MessageModule } from './message/message.module';
       useClass: TypeOrmConfigService,
     }),
     MessageModule,
+    UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [AppGateway],
