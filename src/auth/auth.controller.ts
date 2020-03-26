@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserDTO } from 'src/user/dtos';
 import { AuthService } from './auth.service';
 import { CredentialsDTO } from './dtos';
+import { GetUser } from 'src/user/decorators/get-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +24,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/me')
-  getMe(@Request() req: { user: UserDTO }): UserDTO {
-    return req.user;
+  getMe(@GetUser('http') user: UserDTO): UserDTO {
+    return user;
   }
 }
