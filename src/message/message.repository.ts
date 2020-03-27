@@ -1,6 +1,6 @@
 import { Repository, EntityRepository } from 'typeorm';
 import { Message } from './message.entity';
-import { MessageDTO } from './message.dto';
+import { MessageDTO } from './dtos';
 
 @EntityRepository(Message)
 export class MessageRepository extends Repository<Message> {
