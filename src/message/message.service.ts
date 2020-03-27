@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MessageDTO } from './dtos';
+import { CreateMessageDTO } from './dtos';
 import { MessageRepository } from './message.repository';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class MessageService {
@@ -10,7 +11,7 @@ export class MessageService {
     private readonly messageRepository: MessageRepository,
   ) {}
 
-  saveMessage(dto: MessageDTO) {
-    return this.messageRepository.createMessage(dto);
+  saveMessage(dto: CreateMessageDTO, user: User) {
+    return this.messageRepository.createMessage(dto, user);
   }
 }

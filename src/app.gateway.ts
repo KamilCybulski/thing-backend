@@ -9,7 +9,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { MessageDTO } from './message/dtos';
+import { CreateMessageDTO } from './message/dtos';
 import { MessageService } from './message/message.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth/auth.service';
@@ -51,9 +51,8 @@ export class AppGateway implements OnGatewayDisconnect, OnGatewayConnection, OnG
   }
 
   @SubscribeMessage('message')
-  async handleMessage(@GetUser('ws') user: User, @MessageBody() dto: MessageDTO): Promise<void> {
-    // TODO actually use user object and it's relation to message
-    const message = await this.messageService.saveMessage({ ...dto, username: user.name });
-    this.server.emit('message', message);
+  async handleMessage(@GetUser('ws') user: User, @MessageBody() dto: CreateMessageDTO): Promise<void> {
+    const message = await this.messageService.saveMessage(dto, user);
+    this.server.emit('message', message.toDTO());
   }
 }

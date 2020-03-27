@@ -1,9 +1,9 @@
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { UserDTO } from "src/user/dtos";
 
 export class MessageDTO {
-  @IsNotEmpty()
-  username: string;
-
-  @IsNotEmpty()
   text: string;
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  user: UserDTO;
 }

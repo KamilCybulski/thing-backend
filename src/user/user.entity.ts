@@ -5,9 +5,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { UserDTO } from './dtos';
+import { Message } from 'src/message/message.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -22,6 +24,9 @@ export class User extends BaseEntity {
 
   @Column()
   salt: string;
+
+  @OneToMany(type => Message, message => message.user)
+  messages: Message[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
