@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserDTO } from 'src/user/dtos';
 import { UserService } from 'src/user/user.service';
 import { CredentialsDTO } from './dtos';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -21,15 +22,15 @@ export class AuthService {
     };
   }
 
-  async validateCredentials(username: string, password: string): Promise<UserDTO> {
+  async validateCredentials(username: string, password: string): Promise<User> {
     const user = await this.userService.findByName(username);
     if (!user || !await user.validatePassword(password)) throw new UnauthorizedException();
-    return user.toDTO();
+    return user;
   }
 
-  async validateJWT(userId: number): Promise<UserDTO> {
+  async validateJWT(userId: number): Promise<User> {
     const user = await this.userService.findById(userId);
     if (!user) throw new UnauthorizedException();
-    return user.toDTO();
+    return user;
   }
 }

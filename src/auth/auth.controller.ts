@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpCode, Post, Request, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserDTO } from 'src/user/dtos';
 import { AuthService } from './auth.service';
 import { CredentialsDTO } from './dtos';
 import { GetUser } from 'src/user/decorators/get-user.decorator';
+import { User } from 'src/user/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -18,13 +19,13 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @Post('/signin')
   @HttpCode(200)
-  signIn(@Request() req: { user: UserDTO }) {
-    return this.authService.signIn(req.user);
+  signIn(@GetUser('http') user: User) {
+    return this.authService.signIn(user.toDTO());
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/me')
-  getMe(@GetUser('http') user: UserDTO): UserDTO {
-    return user;
+  getMe(@GetUser('http') user: User): UserDTO {
+    return user.toDTO();
   }
 }

@@ -1,4 +1,6 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { User } from 'src/user/user.entity';
+import { MessageDTO } from './dtos';
 
 @Entity()
 export class Message extends BaseEntity {
@@ -8,12 +10,22 @@ export class Message extends BaseEntity {
   @Column({ type: 'text' })
   text: string;
 
-  @Column()
-  username: string;
+  @ManyToOne(type => User, user => user.messages)
+  user: User;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: number;
+  createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: number;
+  updatedAt: Date;
+
+  toDTO(): MessageDTO {
+    return {
+      id: this.id,
+      text: this.text,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      user: this.user.toDTO(),
+    }
+  }
 }
