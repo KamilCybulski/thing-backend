@@ -18,14 +18,15 @@ import { User } from './user/user.entity';
 import { UserSubscriber } from './user/user.subscriber';
 import { InsertEvent } from 'typeorm';
 import { UserService } from './user/user.service';
-import { UserDTO } from './user/dtos';
+import { UserPresence } from './types';
+
 
 @WebSocketGateway()
 export class AppGateway implements OnGatewayDisconnect, OnGatewayConnection, OnGatewayInit {
   @WebSocketServer()
   private server: Server;
   private logger = new Logger('AppGateway');
-  private users: Record<string, UserDTO> = {};
+  private users: Record<string, UserPresence> = {};
 
   constructor(
     private readonly jwtService: JwtService,
@@ -41,23 +42,28 @@ export class AppGateway implements OnGatewayDisconnect, OnGatewayConnection, OnG
     // Load all users that are saved in the db
     const allUsers = await this.userService.getAll();
     allUsers.forEach((user) => {
-      this.users[String(user.id)] = user.toDTO();
+      this.users[String(user.id)] = { ...user.toDTO(), active: false };
     });
 
     // Update the users list after every new user registers
     this.userSubscriber.subscribeToAfterInsert((event: InsertEvent<User>) => {
       const user = event.entity;
-      this.users[String(user.id)] = user.toDTO();
+      this.users[String(user.id)] = { ...user.toDTO(), active: false };
     });
   }
 
   async handleConnection(client: Socket) {
     try {
+      // Authenticate user
       const { token } = client.handshake.query;
       const { id } = this.jwtService.verify<{ id: number }>(token);
       const user = await this.authService.validateJWT(id);
       client.request.user = user;
-      this.users[String(user.id)] = user.toDTO();
+
+      // Update user status and inform clients
+      this.users[String(user.id)].active = true;
+      this.server.emit('presence', this.users);
+
       this.logger.verbose(`${user.name} connected (id: ${user.id})`);
     } catch (error) {
       client.disconnect();
@@ -68,7 +74,8 @@ export class AppGateway implements OnGatewayDisconnect, OnGatewayConnection, OnG
   handleDisconnect(client: Socket) {
     const user: User = client.request.user;
     if (user) {
-      delete this.users[String(user.id)];
+      this.users[String(user.id)].active = false;
+      this.server.emit('presence', this.users);
     }
     this.logger.verbose(`Client with ID ${client.id} disconnected`);
   }
