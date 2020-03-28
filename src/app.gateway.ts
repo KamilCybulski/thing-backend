@@ -15,22 +15,40 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth/auth.service';
 import { GetUser } from './user/decorators/get-user.decorator';
 import { User } from './user/user.entity';
+import { UserSubscriber } from './user/user.subscriber';
+import { InsertEvent } from 'typeorm';
+import { UserService } from './user/user.service';
+import { UserDTO } from './user/dtos';
 
 @WebSocketGateway()
 export class AppGateway implements OnGatewayDisconnect, OnGatewayConnection, OnGatewayInit {
   @WebSocketServer()
   private server: Server;
-
   private logger = new Logger('AppGateway');
+  private users: Record<string, UserDTO> = {};
 
   constructor(
     private readonly jwtService: JwtService,
     private readonly authService: AuthService,
     private readonly messageService: MessageService,
+    private readonly userService: UserService,
+    private readonly userSubscriber: UserSubscriber,
   ) {}
 
-  afterInit() {
+  async afterInit() {
     this.logger.log('Initialized');
+
+    // Load all users that are saved in the db
+    const allUsers = await this.userService.getAll();
+    allUsers.forEach((user) => {
+      this.users[String(user.id)] = user.toDTO();
+    });
+
+    // Update the users list after every new user registers
+    this.userSubscriber.subscribeToAfterInsert((event: InsertEvent<User>) => {
+      const user = event.entity;
+      this.users[String(user.id)] = user.toDTO();
+    });
   }
 
   async handleConnection(client: Socket) {
@@ -39,6 +57,7 @@ export class AppGateway implements OnGatewayDisconnect, OnGatewayConnection, OnG
       const { id } = this.jwtService.verify<{ id: number }>(token);
       const user = await this.authService.validateJWT(id);
       client.request.user = user;
+      this.users[String(user.id)] = user.toDTO();
       this.logger.verbose(`${user.name} connected (id: ${user.id})`);
     } catch (error) {
       client.disconnect();
@@ -47,6 +66,10 @@ export class AppGateway implements OnGatewayDisconnect, OnGatewayConnection, OnG
   }
 
   handleDisconnect(client: Socket) {
+    const user: User = client.request.user;
+    if (user) {
+      delete this.users[String(user.id)];
+    }
     this.logger.verbose(`Client with ID ${client.id} disconnected`);
   }
 

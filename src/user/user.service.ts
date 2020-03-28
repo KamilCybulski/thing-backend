@@ -23,4 +23,8 @@ export class UserService {
   findById(id: number): Promise<User | null> {
     return this.userRepository.findOne(id);
   }
+
+  getAll(): Promise<User[]> {
+    return this.userRepository.find();
+  }
 }
