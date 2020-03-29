@@ -4,7 +4,6 @@ import { CredentialsDTO } from 'src/auth/dtos';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 
-
 @Injectable()
 export class UserService {
   constructor(

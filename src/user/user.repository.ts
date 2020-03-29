@@ -5,13 +5,19 @@ import { User } from './user.entity';
 import { SqlErrorCodes } from 'src/constants';
 import * as bcrypt from 'bcryptjs';
 
+interface HashPasswordResult {
+  hash: string;
+  salt: string;
+}
+
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   async createUser(dto: CredentialsDTO): Promise<void> {
     const user = new User();
+      const { hash, salt } = await this.hashPassword(dto.password);
       user.name = dto.username;
-      user.salt = await bcrypt.genSalt();
-      user.password = await bcrypt.hash(dto.password, user.salt)
+      user.salt = salt
+      user.password = hash;
 
     try {
       await user.save();
@@ -22,5 +28,11 @@ export class UserRepository extends Repository<User> {
         throw error;
       }
     }
+  }
+
+  async hashPassword(password: string): Promise<HashPasswordResult> {
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(password, salt);
+    return { salt, hash };
   }
 }

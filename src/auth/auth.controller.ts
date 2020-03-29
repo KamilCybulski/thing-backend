@@ -15,7 +15,7 @@ import { AuthService } from './auth.service';
 import { CredentialsDTO } from './dtos';
 import { GetUser } from 'src/user/decorators/get-user.decorator';
 import { User } from 'src/user/user.entity';
-import { SignInResponseDTO } from './dtos/sign-in-response.dto';
+import { SignInResponse } from './types';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -34,9 +34,9 @@ export class AuthController {
   @Post('/signin')
   @HttpCode(200)
   @ApiBody({ type: CredentialsDTO })
-  @ApiResponse({ status: 200, type: SignInResponseDTO })
+  @ApiResponse({ status: 200, type: SignInResponse })
   @ApiResponse({ status: 401, description: 'Unautorized' })
-  signIn(@GetUser('http') user: User): SignInResponseDTO {
+  signIn(@GetUser('http') user: User): SignInResponse {
     return this.authService.signIn(user.toDTO());
   }
 
