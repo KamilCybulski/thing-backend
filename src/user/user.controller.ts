@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, HttpCode, Get } from '@nestjs/common';
+import { Controller, UseGuards, Post, HttpCode, Get, Body } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
@@ -22,7 +22,7 @@ export class UserController {
   @Post('/change-password')
   @HttpCode(200)
   @ApiBody({ type: ChangePasswordDTO })
-  changePassword(@GetUser('http') user: User): void {
-
+  changePassword(@Body() dto: ChangePasswordDTO, @GetUser('http') user: User): Promise<void> {
+    return this.userService.changePassword(dto, user);
   }
 }

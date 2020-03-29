@@ -4,6 +4,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { SqlErrorCodes } from 'src/constants';
 import * as bcrypt from 'bcryptjs';
+import { ChangePasswordDTO } from './dtos';
 
 interface HashPasswordResult {
   hash: string;
@@ -28,6 +29,13 @@ export class UserRepository extends Repository<User> {
         throw error;
       }
     }
+  }
+
+  async changeUserPassword(dto: ChangePasswordDTO, user: User): Promise<void> {
+    const { hash, salt } = await this.hashPassword(dto.password);
+    user.password = hash;
+    user.salt = salt;
+    await user.save();
   }
 
   async hashPassword(password: string): Promise<HashPasswordResult> {

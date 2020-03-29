@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CredentialsDTO } from 'src/auth/dtos';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
+import { ChangePasswordDTO } from './dtos';
 
 @Injectable()
 export class UserService {
@@ -13,6 +14,10 @@ export class UserService {
 
   create(dto: CredentialsDTO): Promise<void> {
     return this.userRepository.createUser(dto);
+  }
+
+  changePassword(dto: ChangePasswordDTO, user: User): Promise<void> {
+    return this.userRepository.changeUserPassword(dto, user);
   }
 
   findByName(name: string): Promise<User | null> {
