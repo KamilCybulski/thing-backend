@@ -1,7 +1,7 @@
 import { Controller, UseGuards, Post, HttpCode, Get, Body } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { GetUser } from './decorators/get-user.decorator';
 import { User } from './user.entity';
 import { ChangePasswordDTO, UserDTO } from './dtos';
@@ -11,6 +11,7 @@ import { ChangePasswordDTO, UserDTO } from './dtos';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Get('/me')
   @ApiResponse({ status: 200, type: UserDTO })
@@ -19,6 +20,7 @@ export class UserController {
     return user.toDTO();
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post('/change-password')
   @HttpCode(200)

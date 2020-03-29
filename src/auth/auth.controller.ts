@@ -39,11 +39,4 @@ export class AuthController {
   signIn(@GetUser('http') user: User): SignInResponse {
     return this.authService.signIn(user.toDTO());
   }
-
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  @Get('/me')
-  getMe(@GetUser('http') user: User): UserDTO {
-    return user.toDTO();
-  }
 }
