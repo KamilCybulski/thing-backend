@@ -4,7 +4,7 @@ import { UserDTO } from 'src/user/dtos';
 import { UserService } from 'src/user/user.service';
 import { CredentialsDTO } from './dtos';
 import { User } from 'src/user/user.entity';
-import { SignInResponseDTO } from './dtos/sign-in-response.dto';
+import { SignInResponse } from './types';
 
 @Injectable()
 export class AuthService {
@@ -17,9 +17,9 @@ export class AuthService {
     return this.userService.create(dto);
   }
 
-  signIn(dto: UserDTO): SignInResponseDTO {
+  signIn(dto: UserDTO): SignInResponse {
     const accessToken = this.jwtService.sign(dto);
-    return new SignInResponseDTO(accessToken);
+    return new SignInResponse(accessToken);
   }
 
   async validateCredentials(username: string, password: string): Promise<User> {
