@@ -1,3 +1,12 @@
-import { User } from "../user.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
-export type UserDTO = Pick<User, 'name' | 'id' | 'createdAt'>;
+export class UserDTO {
+  @ApiProperty()
+  id: number;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  createdAt: Date;
+}
