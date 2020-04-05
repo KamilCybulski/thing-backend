@@ -19,6 +19,8 @@ import { UserSubscriber } from './user/user.subscriber';
 import { InsertEvent } from 'typeorm';
 import { UserService } from './user/user.service';
 import { UserPresence } from './types';
+import { MessageSubscriber } from './message/message.subscriber';
+import { Message } from './message/message.entity';
 
 
 @WebSocketGateway()
@@ -32,6 +34,7 @@ export class AppGateway implements OnGatewayDisconnect, OnGatewayConnection, OnG
     private readonly jwtService: JwtService,
     private readonly authService: AuthService,
     private readonly messageService: MessageService,
+    private readonly messageSubscriber: MessageSubscriber,
     private readonly userService: UserService,
     private readonly userSubscriber: UserSubscriber,
   ) {}
@@ -50,6 +53,11 @@ export class AppGateway implements OnGatewayDisconnect, OnGatewayConnection, OnG
       const user = event.entity;
       this.users[String(user.id)] = { ...user.toDTO(), active: false };
     });
+
+    // Watch for message edits and notify
+    this.messageSubscriber.subscribeToAfterUpdate((message: Message) => {
+      this.server.emit('messageEdited', message);
+    })
   }
 
   async handleConnection(client: Socket) {
