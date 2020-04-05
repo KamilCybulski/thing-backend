@@ -1,16 +1,14 @@
 import {
   Body,
   Controller,
-  Get,
   HttpCode,
   Post,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { UserDTO } from 'src/user/dtos';
 import { AuthService } from './auth.service';
 import { CredentialsDTO } from './dtos';
 import { GetUser } from 'src/user/decorators/get-user.decorator';
